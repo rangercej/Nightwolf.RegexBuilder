@@ -9,21 +9,27 @@
     {
         private readonly List<string> regex = new List<string>(10);
 
-        public RegexBuilder() { }
+        private readonly Scope scope;
+
+        public RegexBuilder(Scope scope = Scope.Anywhere) 
+        {
+            this.scope = scope;
+        }
 
         public override string ToString()
         {
-            return string.Join("", this.regex);
+            var prefix = (this.scope == Scope.StartsWith) || (this.scope == Scope.FullLine) ? "^" : "";
+            var suffix = (this.scope == Scope.EndsWith) || (this.scope == Scope.FullLine) ? "$" : "";
+            
+            return string.Format("{0}{1}{2}", prefix, string.Join("", this.regex), suffix);
         }
 
-        public Regex ToRegex()
+        public Regex ToRegex(RegexOptions options = RegexOptions.None)
         {
-            return new Regex(this.ToString());
-        }
 
-        public Regex ToRegex(RegexOptions options)
-        {
-            return new Regex(this.ToString(), options);
+            return options == RegexOptions.None
+                ? new Regex(this.ToString())
+                : new Regex(this.ToString(), options);
         }
 
         public RegexBuilder Literal(string s, bool replaceWhitespace = false)
@@ -59,18 +65,17 @@
             return this;
         }
 
+        public RegexBuilder Include(RegexBuilder expression)
+        {
+            this.AddExpression("(?:{0})", expression.ToString());
+            return this;
+        }
+
         public RegexBuilder Capture()
         {
             var idx = this.regex.Count - 1;
             var expression = this.regex[idx];
             this.regex[idx] = string.Format("({0})", expression);
-
-            return this;
-        }
-
-        public RegexBuilder CaptureGroup(RegexBuilder expression)
-        {
-            this.AddExpression("({0})", expression.ToString());
 
             return this;
         }
@@ -132,6 +137,14 @@
             ZeroOrMore,
             One,
             OneOrMore
+        }
+
+        public enum Scope
+        {
+            Anywhere,
+            StartsWith,
+            EndsWith,
+            FullLine
         }
     }
 }
