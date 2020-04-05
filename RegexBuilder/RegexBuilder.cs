@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
 
     public sealed class RegexBuilder
@@ -26,7 +27,6 @@
 
         public Regex ToRegex(RegexOptions options = RegexOptions.None)
         {
-
             return options == RegexOptions.None
                 ? new Regex(this.ToString())
                 : new Regex(this.ToString(), options);
@@ -61,7 +61,20 @@
 
         public RegexBuilder AnyOf(IEnumerable<char> values)
         {
-            this.AddExpression("[{0}]", new string(values.ToArray()));
+            var vals = new StringBuilder();
+            foreach (var ch in values)
+            {
+                if (ch == '\\' || ch == ']' || ch == '^' || ch == '-')
+                {
+                    vals.AppendFormat(@"\{0}", ch);
+                } 
+                else
+                {
+                    vals.Append(ch);
+                }
+            }
+
+            this.AddExpression("[{0}]", vals.ToString());
             return this;
         }
 

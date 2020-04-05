@@ -9,11 +9,9 @@
         [TestMethod]
         public void TestLiteral1()
         {
-            var regex = new RegexBuilder().Literal("Hello").ToRegex();
+            var regex = new RegexBuilder().Literal("cat").ToRegex();
 
-            var s = "This is a Hello world";
-
-            Assert.IsTrue(regex.IsMatch(s));
+            Assert.IsTrue(regex.IsMatch("The cat sat on the mat."));
         }
 
         [TestMethod]
@@ -21,8 +19,8 @@
         {
             var regex = new RegexBuilder().Literal(".").ToRegex();
             
-            var result1 = regex.IsMatch("This is a hello world");
-            var result2 = regex.IsMatch("This is a hello world.");
+            var result1 = regex.IsMatch("The cat sat on the mat");
+            var result2 = regex.IsMatch("The cat sat on the mat.");
 
             Assert.IsTrue(result2 && !result1);
         }
@@ -80,6 +78,18 @@
                 && !regex.IsMatch("The cat")
                 && !regex.IsMatch("The cat sat")
                 && !regex.IsMatch("cat sat"));
+        }
+
+        [TestMethod]
+        public void TestAnyOfChar()
+        {
+            var chars = new[] { '^', 'a', 'b', 'c', ']', '-' };
+            var regex = new RegexBuilder().AnyOf(chars).ToRegex();
+
+            Assert.IsTrue(
+                regex.IsMatch("cab")
+                && regex.IsMatch("See this [thing]")
+                && regex.IsMatch("Over-excited"));
         }
 
         [TestMethod]
