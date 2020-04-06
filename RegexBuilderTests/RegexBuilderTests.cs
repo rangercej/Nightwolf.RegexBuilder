@@ -89,7 +89,47 @@
             Assert.IsTrue(
                 regex.IsMatch("cab")
                 && regex.IsMatch("See this [thing]")
-                && regex.IsMatch("Over-excited"));
+                && regex.IsMatch("Over-excited")
+                && !regex.IsMatch("Kitten"));
+        }
+
+        [TestMethod]
+        public void TestNotAnyOfChar()
+        {
+            var chars = new[] { '^', 'o', 'a' };
+            var regex = new RegexBuilder().Literal("c")
+                .Not().AnyOf(chars)
+                .Literal("t").ToRegex();
+
+            Assert.IsTrue(
+                regex.IsMatch("cut")
+                && !regex.IsMatch("cat")
+                && !regex.IsMatch("cot")
+                && !regex.IsMatch("c^t"));
+        }
+
+        [TestMethod]
+        public void TestAnyOfString()
+        {
+            var strings = new[] { "cat", "sat", "mat" };
+            var regex = new RegexBuilder().AnyOf(strings).ToRegex();
+
+            Assert.IsTrue(
+                regex.IsMatch("The cat sits on the carpet")
+                && regex.IsMatch("The kitty sits on the mat")
+                && !regex.IsMatch("The kitty sits on the carpet"));
+        }
+
+        [TestMethod]
+        public void TestNotAnyOfString()
+        {
+            var strings = new[] { "cat", "kitty", "pussycat" };
+            var regex = new RegexBuilder().Literal("The ").Not().AnyOf(strings).ToRegex();
+
+            Assert.IsTrue(
+                !regex.IsMatch("The cat sits on the carpet")
+                && !regex.IsMatch("The kitty sits on the mat")
+                && regex.IsMatch("The dog sits on the carpet"));
         }
 
         [TestMethod]

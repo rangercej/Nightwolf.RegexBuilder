@@ -12,6 +12,23 @@
 
         private readonly Scope scope;
 
+        private bool negate;
+
+        private bool Negate
+        {
+            set 
+            { 
+                this.negate = value; 
+            }
+
+            get
+            {
+                var val = this.negate;
+                this.negate = false;
+                return val;
+            }
+        }
+
         public RegexBuilder(Scope scope = Scope.Anywhere) 
         {
             this.scope = scope;
@@ -37,11 +54,11 @@
             var escaped = Regex.Escape(s);
             if (replaceWhitespace)
             {
-                this.AddExpression("(?:{0})", escaped.Replace(@"\ ", @"\s+"));
+                this.AddExpression(this.Negate ? "(?!{0})" : "(?:{0})", escaped.Replace(@"\ ", @"\s+"));
             } 
             else
             {
-                this.AddExpression("(?:{0})", escaped);
+                this.AddExpression(this.Negate ? "(?!{0})" : "(?:{0})", escaped);
             }
 
             return this;
@@ -49,13 +66,13 @@
 
         public RegexBuilder AnyOf(IEnumerable<RegexBuilder> regex)
         {
-            this.AddExpression("(?:{0})", string.Join("|", regex.Select(x => x.ToString()).ToArray()));
+            this.AddExpression(this.Negate ? "(?!{0})" : "(?:{0})", string.Join("|", regex.Select(x => x.ToString()).ToArray()));
             return this;
         }
 
         public RegexBuilder AnyOf(IEnumerable<string> values)
         {
-            this.AddExpression("(?:{0})", string.Join("|", values.Select(x => Regex.Escape(x))));
+            this.AddExpression(this.Negate ? "(?!(?:{0}))" : "(?:{0})", string.Join("|", values.Select(x => Regex.Escape(x))));
             return this;
         }
 
@@ -74,13 +91,19 @@
                 }
             }
 
-            this.AddExpression("[{0}]", vals.ToString());
+            this.AddExpression(this.Negate ? "[^{0}]" : "[{0}]", vals.ToString());
             return this;
         }
 
         public RegexBuilder Include(RegexBuilder expression)
         {
-            this.AddExpression("(?:{0})", expression.ToString());
+            this.AddExpression(this.Negate ? "(?!{0})" : "(?:{0})", expression.ToString());
+            return this;
+        }
+
+        public RegexBuilder Not()
+        {
+            this.Negate = true;
             return this;
         }
 
