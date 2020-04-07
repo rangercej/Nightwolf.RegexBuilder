@@ -1,4 +1,4 @@
-﻿namespace Nightwolf
+﻿namespace Nightwolf.Regex
 {
     using System;
     using System.Collections.Generic;

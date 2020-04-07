@@ -2,14 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nightwolf
+namespace Nightwolf.Regex
 {
-    public sealed class RegexClass
+    public enum CharacterClass
     {
-        public static readonly string AlphaUpper = "A-Z";
-        public static readonly string AlphaLower = "a-z";
-        public static readonly string Alpha = string.Format("{0}{1}", AlphaUpper, AlphaLower);
-        public static readonly string Digits = "\\d";
-        public static readonly string Whitespace = "\\s";
+        AlphaUpper,
+        AlphaLower,
+        Digits,
+        Whitespace
+    }
+
+    internal static class CharacterClassValues
+    {
+        internal static readonly Dictionary<CharacterClass, string> CharClasses = new Dictionary<CharacterClass, string> {
+            { CharacterClass.AlphaLower, "a-z" },
+            { CharacterClass.AlphaUpper, "A-Z" },
+            { CharacterClass.Digits, "\\d" },
+            { CharacterClass.Whitespace, "\\s" }
+        };
     }
 }
