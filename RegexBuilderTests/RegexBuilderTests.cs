@@ -1,11 +1,21 @@
-﻿namespace Nightwolf
+﻿namespace Nightwolf.Regex
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
     using System.Text.RegularExpressions;
 
     [TestClass]
     public class RegexBuilderTests
     {
+        [TestMethod]
+        public void TestCharClassesHaveDefinition()
+        {
+            foreach (CharacterClass c in Enum.GetValues(typeof(CharacterClass)))
+            {
+                Assert.IsTrue(CharacterClassValues.CharClasses.ContainsKey(c));
+            }
+        }
+
         [TestMethod]
         public void TestLiteral1()
         {
@@ -173,6 +183,34 @@
             var match2pass = match2 != null && match2.Groups[1].Value == "Bob";
 
             Assert.IsTrue(match1pass && match2pass);
+        }
+
+        [TestMethod]
+        public void TestOneshotFlag()
+        {
+            var val = new AutoResetFlag(true);
+            Assert.IsTrue(val.Peek());
+            Assert.IsTrue(val.Read());
+            Assert.IsTrue(!val.Peek());
+            Assert.IsTrue(!val.Read());
+            Assert.IsTrue(!val.Peek());
+            val.Set();
+            Assert.IsTrue(val.Peek());
+            Assert.IsTrue(val.Read());
+            Assert.IsTrue(!val.Peek());
+            Assert.IsTrue(!val.Read());
+            Assert.IsTrue(!val.Peek());
+
+            val = new AutoResetFlag(false);
+            Assert.IsTrue(!val.Peek());
+            Assert.IsTrue(!val.Read());
+            Assert.IsTrue(!val.Peek());
+            val.Set();
+            Assert.IsTrue(val.Peek());
+            Assert.IsTrue(val.Read());
+            Assert.IsTrue(!val.Peek());
+            Assert.IsTrue(!val.Read());
+            Assert.IsTrue(!val.Peek());
         }
     }
 }

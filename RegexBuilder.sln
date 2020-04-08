@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RegexBuilder", "RegexBuilder\RegexBuilder.csproj", "{A4B213A2-4DD4-4258-8C50-05E6C756C4C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nightwolf.Regex", "RegexBuilder\Nightwolf.Regex.csproj", "{A4B213A2-4DD4-4258-8C50-05E6C756C4C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexBuilderTests", "RegexBuilderTests\RegexBuilderTests.csproj", "{7C480B76-FA45-4AB8-9EFC-694D7824BD09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nightwolf.Regex.Tests", "RegexBuilderTests\Nightwolf.Regex.Tests.csproj", "{7C480B76-FA45-4AB8-9EFC-694D7824BD09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

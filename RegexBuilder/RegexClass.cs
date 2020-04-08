@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nightwolf.Regex
+﻿namespace Nightwolf.Regex
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// Regular expression character classes
+    /// </summary>
     public enum CharacterClass
     {
         AlphaUpper,
@@ -12,6 +13,7 @@ namespace Nightwolf.Regex
         Whitespace
     }
 
+    /// <summary>Regex value of character classes</summary>
     internal static class CharacterClassValues
     {
         internal static readonly Dictionary<CharacterClass, string> CharClasses = new Dictionary<CharacterClass, string> {
