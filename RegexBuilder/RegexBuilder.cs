@@ -76,6 +76,19 @@
         }
 
         /// <summary>
+        /// Add a literal string
+        /// </summary>
+        /// <param name="s">String to add</param>
+        /// <param name="replaceWhitespace">When true, replaces all space chars with a regex to match all whitespace</param>
+        /// <returns>This regular expression builder</returns>
+        public RegexBuilder CharClass(CharacterClass val)
+        {
+            this.AddExpression(this.negate.Read() ? "(?!{0})" : "(?:{0})", CharacterClassValues.CharClasses[val]);
+
+            return this;
+        }
+
+        /// <summary>
         /// Add a regex alternate for a set of regular expressions
         /// </summary>
         /// <param name="regex">Set of alternate regex to match</param>
@@ -100,25 +113,57 @@
         /// <summary>
         /// Add a regex alternate for a set of characters
         /// </summary>
-        /// <param name="values">Set of characters to match</param>
+        /// <param name="chars">Set of characters to match</param>
+        /// <param name="classes">Set of character classes to match</param>
         /// <returns>This regular expression builder</returns>
-        public RegexBuilder AnyOf(IEnumerable<char> values)
+        public RegexBuilder AnyOf(IEnumerable<char> chars, IEnumerable<CharacterClass> classes)
         {
-            var vals = new StringBuilder();
-            foreach (var ch in values)
+            var vals = new StringBuilder(10);
+            if (chars != null)
             {
-                if (ch == '\\' || ch == ']' || ch == '^' || ch == '-')
+                foreach (var ch in chars)
                 {
-                    vals.AppendFormat(@"\{0}", ch);
-                } 
-                else
+                    if (ch == '\\' || ch == ']' || ch == '^' || ch == '-')
+                    {
+                        vals.AppendFormat(@"\{0}", ch);
+                    }
+                    else
+                    {
+                        vals.Append(ch);
+                    }
+                }
+            }
+
+            if (classes != null)
+            {
+                foreach (var val in classes)
                 {
-                    vals.Append(ch);
+                    vals.Append(CharacterClassValues.CharClasses[val]);
                 }
             }
 
             this.AddExpression(this.negate.Read() ? "[^{0}]" : "[{0}]", vals.ToString());
             return this;
+        }
+
+        /// <summary>
+        /// Add a regex alternate for a set of characters
+        /// </summary>
+        /// <param name="chars">Set of characters to match</param>
+        /// <returns>This regular expression builder</returns>
+        public RegexBuilder AnyOf(IEnumerable<char> chars)
+        {
+            return this.AnyOf(chars, null);
+        }
+
+        /// <summary>
+        /// Add a regex alternate for a set of characters
+        /// </summary>
+        /// <param name="classes">Set of character classes to match</param>
+        /// <returns>This regular expression builder</returns>
+        public RegexBuilder AnyOf(IEnumerable<CharacterClass> classes)
+        {
+            return this.AnyOf(null, classes);
         }
 
         /// <summary>
@@ -160,7 +205,7 @@
         /// </summary>
         /// <param name="repeats">Repeat indicator</param>
         /// <returns>This regular expression builder</returns>
-        public RegexBuilder Limit(Repeats repeats)
+        public RegexBuilder Repeat(Repeats repeats)
         {
             var idx = this.regex.Count - 1;
 
@@ -181,7 +226,7 @@
         /// <param name="min">Minimum repeats</param>
         /// <param name="max">Maximum repeats</param>
         /// <returns>This regular expression builder</returns>
-        public RegexBuilder Limit(int? min, int? max)
+        public RegexBuilder Repeat(int? min, int? max)
         {
             var idx = this.regex.Count - 1;
             if (min == null && max == null)
@@ -193,6 +238,10 @@
                 if (min.Value > max.Value)
                 {
                     throw new ArgumentException("min cannot be larger than max");
+                }
+                else if (min.Value == max.Value)
+                {
+                    this.regex[idx] += string.Format("{{{0}}}", min);
                 }
                 else
                 {

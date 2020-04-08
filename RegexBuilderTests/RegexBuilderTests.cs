@@ -119,6 +119,31 @@
         }
 
         [TestMethod]
+        public void TestAnyOfCharClass()
+        {
+            var chars = new[] { CharacterClass.AlphaLower, CharacterClass.Digits };
+            var regex = new RegexBuilder().AnyOf(chars).ToRegex();
+
+            Assert.IsTrue(regex.IsMatch("Letters"));
+            Assert.IsTrue(regex.IsMatch("Letters and 1234"));
+            Assert.IsTrue(regex.IsMatch("LETTERS AND 1234"));
+            Assert.IsTrue(regex.IsMatch("1234"));
+            Assert.IsTrue(!regex.IsMatch("LETTERS"));
+        }
+
+        [TestMethod]
+        public void TestNotAnyOfCharClass()
+        {
+            var chars = new[] { CharacterClass.AlphaLower, CharacterClass.Digits };
+            var regex = new RegexBuilder().Not().AnyOf(chars).ToRegex();
+
+            Assert.IsTrue(regex.IsMatch("Letters"));
+            Assert.IsTrue(regex.IsMatch("LETTERS 1234"));
+            Assert.IsTrue(!regex.IsMatch("letters"));
+            Assert.IsTrue(!regex.IsMatch("1234"));
+        }
+
+        [TestMethod]
         public void TestAnyOfString()
         {
             var strings = new[] { "cat", "sat", "mat" };
@@ -146,7 +171,7 @@
         public void TestLimitOne()
         {
             var regex = new RegexBuilder(RegexBuilder.Scope.StartsWith)
-                .Literal("dbo.").Limit(RegexBuilder.Repeats.One)
+                .Literal("dbo.").Repeat(RegexBuilder.Repeats.One)
                 .ToRegex();
 
             Assert.IsTrue(regex.IsMatch("dbo.TableName") && !regex.IsMatch("TableName"));
@@ -156,7 +181,7 @@
         public void TestLimitZeroOrOne()
         {
             var regex = new RegexBuilder(RegexBuilder.Scope.StartsWith)
-                .Literal("dbo.").Limit(RegexBuilder.Repeats.ZeroOrOne)
+                .Literal("dbo.").Repeat(RegexBuilder.Repeats.ZeroOrOne)
                 .ToRegex();
 
             Assert.IsTrue(regex.IsMatch("dbo.TableName") && regex.IsMatch("TableName"));
@@ -171,8 +196,8 @@
 
             var regex = new RegexBuilder()
                     .Literal("CREATE TABLE ", true)
-                    .Literal("dbo.").Limit(RegexBuilder.Repeats.ZeroOrOne)
-                    .AnyOf(alphabet).Limit(RegexBuilder.Repeats.OneOrMore).Capture()
+                    .Literal("dbo.").Repeat(RegexBuilder.Repeats.ZeroOrOne)
+                    .AnyOf(alphabet).Repeat(RegexBuilder.Repeats.OneOrMore).Capture()
                     .Literal(" ")
                     .ToRegex(RegexOptions.IgnoreCase);
 
