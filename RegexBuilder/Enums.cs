@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nightwolf.Regex
+﻿namespace Nightwolf.Regex
 {
     /// <summary>Repeats enum</summary>
     public enum RegexRepeats
