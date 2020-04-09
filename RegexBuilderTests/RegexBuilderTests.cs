@@ -38,7 +38,7 @@
         [TestMethod]
         public void TestRaw()
         {
-            var regex = new RegexBuilder(RegexBuilder.Scope.StartsWith)
+            var regex = new RegexBuilder(RegexScope.StartsWith)
                 .Literal("The ", true)
                 .Raw("c[auo]t")
                 .ToRegex();
@@ -62,7 +62,7 @@
         [TestMethod]
         public void TestScopeAnywhere()
         {
-            var regex = new RegexBuilder(RegexBuilder.Scope.Anywhere).Literal("cat").ToRegex();
+            var regex = new RegexBuilder(RegexScope.Anywhere).Literal("cat").ToRegex();
             Assert.IsTrue(
                 regex.IsMatch("cat")
                 && regex.IsMatch("The cat")
@@ -73,7 +73,7 @@
         [TestMethod]
         public void TestScopeStartsWith()
         {
-            var regex = new RegexBuilder(RegexBuilder.Scope.StartsWith).Literal("cat").ToRegex();
+            var regex = new RegexBuilder(RegexScope.StartsWith).Literal("cat").ToRegex();
             Assert.IsTrue(
                 regex.IsMatch("cat")
                 && !regex.IsMatch("The cat")
@@ -84,7 +84,7 @@
         [TestMethod]
         public void TestScopeEndsWith()
         {
-            var regex = new RegexBuilder(RegexBuilder.Scope.EndsWith).Literal("cat").ToRegex();
+            var regex = new RegexBuilder(RegexScope.EndsWith).Literal("cat").ToRegex();
             Assert.IsTrue(
                 regex.IsMatch("cat")
                 && regex.IsMatch("The cat")
@@ -95,7 +95,7 @@
         [TestMethod]
         public void TestScopeFullLine()
         {
-            var regex = new RegexBuilder(RegexBuilder.Scope.FullLine).Literal("cat").ToRegex();
+            var regex = new RegexBuilder(RegexScope.FullLine).Literal("cat").ToRegex();
             Assert.IsTrue(
                 regex.IsMatch("cat")
                 && !regex.IsMatch("The cat")
@@ -183,8 +183,8 @@
         [TestMethod]
         public void TestLimitOne()
         {
-            var regex = new RegexBuilder(RegexBuilder.Scope.StartsWith)
-                .Literal("dbo.").Repeat(RegexBuilder.Repeats.One)
+            var regex = new RegexBuilder(RegexScope.StartsWith)
+                .Literal("dbo.").Repeat(RegexRepeats.One)
                 .ToRegex();
 
             Assert.IsTrue(regex.IsMatch("dbo.TableName") && !regex.IsMatch("TableName"));
@@ -193,8 +193,8 @@
         [TestMethod]
         public void TestLimitZeroOrOne()
         {
-            var regex = new RegexBuilder(RegexBuilder.Scope.StartsWith)
-                .Literal("dbo.").Repeat(RegexBuilder.Repeats.ZeroOrOne)
+            var regex = new RegexBuilder(RegexScope.StartsWith)
+                .Literal("dbo.").Repeat(RegexRepeats.ZeroOrOne)
                 .ToRegex();
 
             Assert.IsTrue(regex.IsMatch("dbo.TableName") && regex.IsMatch("TableName"));
@@ -209,8 +209,8 @@
 
             var regex = new RegexBuilder()
                     .Literal("CREATE TABLE ", true)
-                    .Literal("dbo.").Repeat(RegexBuilder.Repeats.ZeroOrOne)
-                    .AnyOf(alphabet).Repeat(RegexBuilder.Repeats.OneOrMore).Capture()
+                    .Literal("dbo.").Repeat(RegexRepeats.ZeroOrOne)
+                    .AnyOf(alphabet).Repeat(RegexRepeats.OneOrMore).Capture()
                     .Literal(" ")
                     .ToRegex(RegexOptions.IgnoreCase);
 

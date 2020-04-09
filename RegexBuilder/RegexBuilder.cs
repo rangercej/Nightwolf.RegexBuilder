@@ -15,7 +15,7 @@
         private readonly List<string> regex = new List<string>(10);
 
         /// <summary>Anywhere in a line, full line, something else?</summary>
-        private readonly Scope scope;
+        private readonly RegexScope scope;
 
         /// <summary>Negate flag.</summary>
         private AutoResetFlag negate;
@@ -24,7 +24,7 @@
         /// Create a new builder with the defined scope
         /// </summary>
         /// <param name="scope"></param>
-        public RegexBuilder(Scope scope = Scope.Anywhere) 
+        public RegexBuilder(RegexScope scope = RegexScope.Anywhere) 
         {
             this.negate = new AutoResetFlag(false);
             this.scope = scope;
@@ -36,8 +36,8 @@
         /// <returns>Regular expression as a string</returns>
         public override string ToString()
         {
-            var prefix = (this.scope == Scope.StartsWith) || (this.scope == Scope.FullLine) ? "^" : "";
-            var suffix = (this.scope == Scope.EndsWith) || (this.scope == Scope.FullLine) ? "$" : "";
+            var prefix = (this.scope == RegexScope.StartsWith) || (this.scope == RegexScope.FullLine) ? "^" : "";
+            var suffix = (this.scope == RegexScope.EndsWith) || (this.scope == RegexScope.FullLine) ? "$" : "";
             
             return string.Format("{0}{1}{2}", prefix, string.Join("", this.regex), suffix);
         }
@@ -216,15 +216,15 @@
         /// </summary>
         /// <param name="repeats">Repeat indicator</param>
         /// <returns>This regular expression builder</returns>
-        public RegexBuilder Repeat(Repeats repeats)
+        public RegexBuilder Repeat(RegexRepeats repeats)
         {
             var idx = this.regex.Count - 1;
 
             switch (repeats)
             {
-                case Repeats.ZeroOrOne: this.regex[idx] += "?"; break;
-                case Repeats.ZeroOrMore: this.regex[idx] += "*"; break;
-                case Repeats.OneOrMore: this.regex[idx] += "+"; break;
+                case RegexRepeats.ZeroOrOne: this.regex[idx] += "?"; break;
+                case RegexRepeats.ZeroOrMore: this.regex[idx] += "*"; break;
+                case RegexRepeats.OneOrMore: this.regex[idx] += "+"; break;
                 default: break;
             }
 
@@ -280,24 +280,6 @@
         {
             var s = string.Format(format, expression);
             this.regex.Add(s);
-        }
-
-        /// <summary>Repeats enum</summary>
-        public enum Repeats
-        {
-            ZeroOrOne,
-            ZeroOrMore,
-            One,
-            OneOrMore
-        }
-
-        /// <summary>Scopes for the regular expression</summary>
-        public enum Scope
-        {
-            Anywhere,
-            StartsWith,
-            EndsWith,
-            FullLine
         }
     }
 }
