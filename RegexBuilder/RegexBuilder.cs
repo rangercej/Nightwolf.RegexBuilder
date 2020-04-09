@@ -219,6 +219,20 @@
         }
 
         /// <summary>
+        /// Capture the previous expression into a capture group with a given name.
+        /// </summary>
+        /// <param name="name">Name of the capture group</param>
+        /// <returns>This regular expression builder</returns>
+        public RegexBuilder Capture(string name)
+        {
+            var idx = this.regex.Count - 1;
+            var expression = this.regex[idx];
+            this.regex[idx] = string.Format("(?<{0}>{1})", name, expression);
+
+            return this;
+        }
+
+        /// <summary>
         /// How many of the previous expression should match
         /// </summary>
         /// <param name="repeats">Repeat indicator</param>

@@ -193,7 +193,7 @@
         }
 
         [TestMethod]
-        public void TestRegEx()
+        public void TestCapture()
         {
             var sql1 = "CREATE TABLE dbo.Bob (a INT IDENTITY(1,1))";
             var sql2 = "CREATE TABLE Bob (a INT IDENTITY(1,1))";
@@ -211,6 +211,28 @@
 
             Assert.IsTrue(match1 != null && match1.Groups[1].Value == "Bob");
             Assert.IsTrue(match2 != null && match2.Groups[1].Value == "Bob");
+        }
+
+
+        [TestMethod]
+        public void TestCaptureByName()
+        {
+            var sql1 = "CREATE TABLE dbo.Bob (a INT IDENTITY(1,1))";
+            var sql2 = "CREATE TABLE Bob (a INT IDENTITY(1,1))";
+            char[] alphabet = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+
+            var regex = new RegexBuilder()
+                    .Literal("CREATE TABLE ", true)
+                    .Literal("dbo.").Repeat(RegexRepeats.ZeroOrOne)
+                    .AnyOf(alphabet).Repeat(RegexRepeats.OneOrMore).Capture("tableName")
+                    .Literal(" ")
+                    .ToRegex(RegexOptions.IgnoreCase);
+
+            var match1 = regex.Match(sql1);
+            var match2 = regex.Match(sql2);
+
+            Assert.IsTrue(match1.Success && match1.Groups["tableName"].Value == "Bob");
+            Assert.IsTrue(match2.Success && match2.Groups["tableName"].Value == "Bob");
         }
 
         [TestMethod]
