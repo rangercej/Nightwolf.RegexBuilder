@@ -29,10 +29,8 @@
         {
             var regex = new RegexBuilder().Literal(".").ToRegex();
             
-            var result1 = regex.IsMatch("The cat sat on the mat");
-            var result2 = regex.IsMatch("The cat sat on the mat.");
-
-            Assert.IsTrue(result2 && !result1);
+            Assert.IsTrue(!regex.IsMatch("The cat sat on the mat"));
+            Assert.IsTrue(regex.IsMatch("The cat sat on the mat."));
         }
 
         [TestMethod]
@@ -52,55 +50,53 @@
         public void TestScopeDefaultIsAnywhere()
         {
             var regex = new RegexBuilder().Literal("cat").ToRegex();
-            Assert.IsTrue(
-                regex.IsMatch("cat")
-                && regex.IsMatch("The cat")
-                && regex.IsMatch("The cat sat")
-                && regex.IsMatch("cat sat"));
+
+            Assert.IsTrue(regex.IsMatch("cat"));
+            Assert.IsTrue(regex.IsMatch("The cat"));
+            Assert.IsTrue(regex.IsMatch("The cat sat"));
+            Assert.IsTrue(regex.IsMatch("cat sat"));
         }
 
         [TestMethod]
         public void TestScopeAnywhere()
         {
             var regex = new RegexBuilder(RegexScope.Anywhere).Literal("cat").ToRegex();
-            Assert.IsTrue(
-                regex.IsMatch("cat")
-                && regex.IsMatch("The cat")
-                && regex.IsMatch("The cat sat")
-                && regex.IsMatch("cat sat"));
+            Assert.IsTrue(regex.IsMatch("cat"));
+            Assert.IsTrue(regex.IsMatch("The cat"));
+            Assert.IsTrue(regex.IsMatch("The cat sat"));
+            Assert.IsTrue(regex.IsMatch("cat sat"));
         }
 
         [TestMethod]
         public void TestScopeStartsWith()
         {
             var regex = new RegexBuilder(RegexScope.StartsWith).Literal("cat").ToRegex();
-            Assert.IsTrue(
-                regex.IsMatch("cat")
-                && !regex.IsMatch("The cat")
-                && !regex.IsMatch("The cat sat")
-                && regex.IsMatch("cat sat"));
+            Assert.IsTrue(regex.IsMatch("cat"));
+            Assert.IsTrue(!regex.IsMatch("The cat"));
+            Assert.IsTrue(!regex.IsMatch("The cat sat"));
+            Assert.IsTrue(regex.IsMatch("cat sat"));
         }
 
         [TestMethod]
         public void TestScopeEndsWith()
         {
             var regex = new RegexBuilder(RegexScope.EndsWith).Literal("cat").ToRegex();
-            Assert.IsTrue(
-                regex.IsMatch("cat")
-                && regex.IsMatch("The cat")
-                && !regex.IsMatch("The cat sat")
-                && !regex.IsMatch("cat sat"));
+
+            Assert.IsTrue(regex.IsMatch("cat"));
+            Assert.IsTrue(regex.IsMatch("The cat"));
+            Assert.IsTrue(!regex.IsMatch("The cat sat"));
+            Assert.IsTrue(!regex.IsMatch("cat sat"));
         }
 
         [TestMethod]
         public void TestScopeFullLine()
         {
             var regex = new RegexBuilder(RegexScope.FullLine).Literal("cat").ToRegex();
-            Assert.IsTrue(
-                regex.IsMatch("cat")
-                && !regex.IsMatch("The cat")
-                && !regex.IsMatch("The cat sat")
-                && !regex.IsMatch("cat sat"));
+
+            Assert.IsTrue(regex.IsMatch("cat"));
+            Assert.IsTrue(!regex.IsMatch("The cat"));
+            Assert.IsTrue(!regex.IsMatch("The cat sat"));
+            Assert.IsTrue(!regex.IsMatch("cat sat"));
         }
 
         [TestMethod]
@@ -109,11 +105,10 @@
             var chars = new[] { '^', 'a', 'b', 'c', ']', '-' };
             var regex = new RegexBuilder().AnyOf(chars).ToRegex();
 
-            Assert.IsTrue(
-                regex.IsMatch("cab")
-                && regex.IsMatch("See this [thing]")
-                && regex.IsMatch("Over-excited")
-                && !regex.IsMatch("Kitten"));
+            Assert.IsTrue(regex.IsMatch("cab"));
+            Assert.IsTrue(regex.IsMatch("See this [thing]"));
+            Assert.IsTrue(regex.IsMatch("Over-excited"));
+            Assert.IsTrue(!regex.IsMatch("Kitten"));
         }
 
         [TestMethod]
@@ -124,11 +119,10 @@
                 .Not().AnyOf(chars)
                 .Literal("t").ToRegex();
 
-            Assert.IsTrue(
-                regex.IsMatch("cut")
-                && !regex.IsMatch("cat")
-                && !regex.IsMatch("cot")
-                && !regex.IsMatch("c^t"));
+            Assert.IsTrue(regex.IsMatch("cut"));
+            Assert.IsTrue(!regex.IsMatch("cat"));
+            Assert.IsTrue(!regex.IsMatch("cot"));
+            Assert.IsTrue(!regex.IsMatch("c^t"));
         }
 
         [TestMethod]
@@ -162,10 +156,9 @@
             var strings = new[] { "cat", "sat", "mat" };
             var regex = new RegexBuilder().AnyOf(strings).ToRegex();
 
-            Assert.IsTrue(
-                regex.IsMatch("The cat sits on the carpet")
-                && regex.IsMatch("The kitty sits on the mat")
-                && !regex.IsMatch("The kitty sits on the carpet"));
+            Assert.IsTrue(regex.IsMatch("The cat sits on the carpet"));
+            Assert.IsTrue(regex.IsMatch("The kitty sits on the mat"));
+            Assert.IsTrue(!regex.IsMatch("The kitty sits on the carpet"));
         }
 
         [TestMethod]
@@ -174,10 +167,9 @@
             var strings = new[] { "cat", "kitty", "pussycat" };
             var regex = new RegexBuilder().Literal("The ").Not().AnyOf(strings).ToRegex();
 
-            Assert.IsTrue(
-                !regex.IsMatch("The cat sits on the carpet")
-                && !regex.IsMatch("The kitty sits on the mat")
-                && regex.IsMatch("The dog sits on the carpet"));
+            Assert.IsTrue(!regex.IsMatch("The cat sits on the carpet"));
+            Assert.IsTrue(!regex.IsMatch("The kitty sits on the mat"));
+            Assert.IsTrue(regex.IsMatch("The dog sits on the carpet"));
         }
 
         [TestMethod]
@@ -217,10 +209,8 @@
             var match1 = regex.Match(sql1);
             var match2 = regex.Match(sql2);
 
-            var match1pass = match1 != null && match1.Groups[1].Value == "Bob";
-            var match2pass = match2 != null && match2.Groups[1].Value == "Bob";
-
-            Assert.IsTrue(match1pass && match2pass);
+            Assert.IsTrue(match1 != null && match1.Groups[1].Value == "Bob");
+            Assert.IsTrue(match2 != null && match2.Groups[1].Value == "Bob");
         }
 
         [TestMethod]
