@@ -36,6 +36,19 @@
         }
 
         [TestMethod]
+        public void TestRaw()
+        {
+            var regex = new RegexBuilder(RegexBuilder.Scope.StartsWith)
+                .Literal("The ", true)
+                .Raw("c[auo]t")
+                .ToRegex();
+
+            Assert.IsTrue(regex.IsMatch("The cat"));
+            Assert.IsTrue(regex.IsMatch("The cut"));
+            Assert.IsTrue(!regex.IsMatch("The cet"));
+        }
+
+        [TestMethod]
         public void TestScopeDefaultIsAnywhere()
         {
             var regex = new RegexBuilder().Literal("cat").ToRegex();

@@ -76,6 +76,17 @@
         }
 
         /// <summary>
+        /// Add a raw regular expression
+        /// </summary>
+        /// <param name="regex">String to add</param>
+        /// <returns>This regular expression builder</returns>
+        public RegexBuilder Raw(string regex)
+        {
+            this.AddExpression(this.negate.Read() ? "(?!{0})" : "(?:{0})", regex);
+            return this;
+        }
+
+        /// <summary>
         /// Add a literal string
         /// </summary>
         /// <param name="s">String to add</param>
