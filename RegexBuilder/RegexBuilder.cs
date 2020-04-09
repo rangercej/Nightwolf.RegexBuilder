@@ -87,7 +87,7 @@
         }
 
         /// <summary>
-        /// Add a literal string
+        /// Add a character class
         /// </summary>
         /// <param name="s">String to add</param>
         /// <param name="replaceWhitespace">When true, replaces all space chars with a regex to match all whitespace</param>
@@ -95,7 +95,6 @@
         public RegexBuilder CharClass(CharacterClass val)
         {
             this.AddExpression(this.negate.Read() ? "(?!{0})" : "(?:{0})", CharacterClassValues.CharClasses[val]);
-
             return this;
         }
 
@@ -147,9 +146,17 @@
 
             if (classes != null)
             {
-                foreach (var val in classes)
+                foreach (var cl in classes)
                 {
-                    vals.Append(CharacterClassValues.CharClasses[val]);
+                    var val = CharacterClassValues.CharClasses[cl];
+                    if (val.StartsWith("[") && val.EndsWith("]"))
+                    {
+                        vals.Append(val.Substring(1, val.Length - 2));
+                    } 
+                    else
+                    {
+                        vals.Append(val);
+                    }
                 }
             }
 

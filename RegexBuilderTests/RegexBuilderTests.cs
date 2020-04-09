@@ -128,7 +128,7 @@
         [TestMethod]
         public void TestAnyOfCharClass()
         {
-            var chars = new[] { CharacterClass.AlphaLower, CharacterClass.Digits };
+            var chars = new[] { CharacterClass.AlphaLower, CharacterClass.Digit };
             var regex = new RegexBuilder().AnyOf(chars).ToRegex();
 
             Assert.IsTrue(regex.IsMatch("Letters"));
@@ -141,7 +141,7 @@
         [TestMethod]
         public void TestNotAnyOfCharClass()
         {
-            var chars = new[] { CharacterClass.AlphaLower, CharacterClass.Digits };
+            var chars = new[] { CharacterClass.AlphaLower, CharacterClass.Digit };
             var regex = new RegexBuilder().Not().AnyOf(chars).ToRegex();
 
             Assert.IsTrue(regex.IsMatch("Letters"));
@@ -239,6 +239,34 @@
             Assert.IsTrue(!val.Peek());
             Assert.IsTrue(!val.Read());
             Assert.IsTrue(!val.Peek());
+        }
+
+        [TestMethod]
+        public void TestClassesAndIncludes()
+        {
+            var wordRegex = new RegexBuilder()
+                .CharClass(CharacterClass.WordBoundary)
+                .CharClass(CharacterClass.WordChar).Repeat(RegexRepeats.OneOrMore)
+                .CharClass(CharacterClass.WordBoundary);
+
+            var seperatorRegex = new RegexBuilder().AnyOf(new[] { '-' }, new[] { CharacterClass.Whitespace });
+
+            var regex = new RegexBuilder(RegexScope.FullLine)
+                .Include(wordRegex).Capture()
+                .Include(seperatorRegex)
+                .Include(wordRegex).Capture()
+                .CharClass(CharacterClass.Any).Repeat(RegexRepeats.ZeroOrMore)
+                .ToRegex();
+
+            var match1 = regex.Match("Hello world");
+            var match2 = regex.Match("Hello-world");
+            var match3 = regex.Match("Hello");
+            var match4 = regex.Match("Hello wo!ld");
+
+            Assert.IsTrue(match1.Success && match1.Groups.Count == 3 && match1.Groups[1].Value == "Hello" && match1.Groups[2].Value == "world");
+            Assert.IsTrue(match2.Success && match2.Groups.Count == 3 && match2.Groups[1].Value == "Hello" && match2.Groups[2].Value == "world");
+            Assert.IsTrue(!match3.Success);
+            Assert.IsTrue(match4.Success && match4.Groups.Count == 3 && match4.Groups[1].Value == "Hello" && match4.Groups[2].Value == "wo");
         }
     }
 }
