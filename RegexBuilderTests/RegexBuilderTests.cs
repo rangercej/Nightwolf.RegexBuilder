@@ -193,6 +193,24 @@
         }
 
         [TestMethod]
+        public void TestLimitMinMax()
+        {
+            var regexGreedy = new RegexBuilder(RegexScope.StartsWith)
+                .Literal("Boo").Repeat(2, 4, true).Capture()
+                .ToRegex();
+
+            var regexNotGreedy = new RegexBuilder(RegexScope.StartsWith)
+                .Literal("Boo").Repeat(2, 4, false).Capture()
+                .ToRegex();
+
+            var match1 = regexGreedy.Match("BooBooBooBooBooBooBooBoo");
+            var match2 = regexNotGreedy.Match("BooBooBooBooBooBooBooBoo");
+
+            Assert.IsTrue(match1.Success && match1.Groups[1].Value == "BooBooBooBoo");
+            Assert.IsTrue(match2.Success && match2.Groups[1].Value == "BooBoo");
+        }
+
+        [TestMethod]
         public void TestCapture()
         {
             var sql1 = "CREATE TABLE dbo.Bob (a INT IDENTITY(1,1))";

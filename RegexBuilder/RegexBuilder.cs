@@ -236,17 +236,25 @@
         /// How many of the previous expression should match
         /// </summary>
         /// <param name="repeats">Repeat indicator</param>
+        /// <param name="greedy">Do a greedy match or not (default = true)</param>
         /// <returns>This regular expression builder</returns>
-        public RegexBuilder Repeat(RegexRepeats repeats)
+        public RegexBuilder Repeat(RegexRepeats repeats, bool greedy = true)
         {
             var idx = this.regex.Count - 1;
 
             switch (repeats)
             {
-                case RegexRepeats.ZeroOrOne: this.regex[idx] += "?"; break;
-                case RegexRepeats.ZeroOrMore: this.regex[idx] += "*"; break;
-                case RegexRepeats.OneOrMore: this.regex[idx] += "+"; break;
-                default: break;
+                case RegexRepeats.ZeroOrOne: 
+                    this.regex[idx] += greedy ? "?"  : "??"; 
+                    break;
+                case RegexRepeats.ZeroOrMore: 
+                    this.regex[idx] += greedy ? "*" : "*?"; 
+                    break;
+                case RegexRepeats.OneOrMore: 
+                    this.regex[idx] += greedy ? "+" : "+?"; 
+                    break;
+                default: 
+                    break;
             }
 
             return this;
@@ -257,8 +265,9 @@
         /// </summary>
         /// <param name="min">Minimum repeats</param>
         /// <param name="max">Maximum repeats</param>
+        /// <param name="greedy">Do a greedy match or not (default = true)</param>
         /// <returns>This regular expression builder</returns>
-        public RegexBuilder Repeat(int? min, int? max)
+        public RegexBuilder Repeat(int? min, int? max, bool greedy = true)
         {
             var idx = this.regex.Count - 1;
             if (min == null && max == null)
@@ -273,20 +282,20 @@
                 }
                 else if (min.Value == max.Value)
                 {
-                    this.regex[idx] += string.Format("{{{0}}}", min);
+                    this.regex[idx] += string.Format("{{{0}}}{1}", min, greedy ? "" : "?");
                 }
                 else
                 {
-                    this.regex[idx] += string.Format("{{{0},{1}}}", min, max);
+                    this.regex[idx] += string.Format("{{{0},{1}}}{2}", min, max, greedy ? "" : "?");
                 }
             } 
             else if (min == null && max != null)
             {
-                this.regex[idx] += string.Format("{{,{0}}}", max);
+                this.regex[idx] += string.Format("{{,{0}}}{1}", max, greedy ? "" : "?");
             } 
             else if (min != null && max == null)
             {
-                this.regex[idx] += string.Format("{{{0},}}", min);
+                this.regex[idx] += string.Format("{{{0},}}{1}", min, greedy ? "" : "?");
             }
 
             return this;
